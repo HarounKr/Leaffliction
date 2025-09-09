@@ -1,4 +1,5 @@
 venv/
 charts/
 images/
-test_images
+test_images/
+augmented_directory
