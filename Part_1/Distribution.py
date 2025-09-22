@@ -26,6 +26,7 @@ def create_pie_chart(sizes, labels, charts_dir, category) -> None:
     labels_len = len(labels)
     ax.pie(sizes, labels=labels, autopct='%1.1f%%', colors=colors[:labels_len])
     plt.savefig(os.path.join(charts_dir, f'{category}_pie.png'))
+    plt.tight_layout()
     plt.close(fig)
 
 
@@ -33,6 +34,7 @@ def create_bar_chart(labels, values, charts_dir, category) -> None:
     fig, ax = plt.subplots()
     ax.bar(labels, values, color=colors[:len(labels)])
     plt.savefig(os.path.join(charts_dir, f'{category}_bar.png'))
+    plt.tight_layout()
     plt.close(fig)
 
 

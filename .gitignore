@@ -2,4 +2,7 @@ venv/
 charts/
 images/
 test_images/
-augmented_directory
+augmented_directory/
+predict/
+result/
+result.zip
