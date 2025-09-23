@@ -47,7 +47,6 @@ def gaussian(src, dst, is_file=False):
         base, ext = os.path.splitext(os.path.basename(img_file))
         output_path = os.path.join(dst, f"{base}_gaussian{ext}")
         cv2.imwrite(output_path, blurred_img)
-        print(f"Processed and saved: {output_path}")
 
     return
 
@@ -126,7 +125,6 @@ def roi_objects(src, dst, is_file=False):
 
 # done - Analyze object
 def analyze_object(src, dst, is_file=False):
-    print('analyze_object')
     os.makedirs(dst, exist_ok=True)
 
     # Récupère les fichiers images
@@ -182,7 +180,6 @@ def analyze_object(src, dst, is_file=False):
 
 # done - Pseudolandmarks
 def pseudolandmarks(src, dst, is_file=False):
-    print('pseudolandmarks')
     os.makedirs(dst, exist_ok=True)
 
     # Récupère les fichiers images
@@ -275,11 +272,16 @@ if __name__ == '__main__':
 
     exts = (".jpg", ".jpeg", ".png")
     transform_funcs = {
-        'gaussian': lambda src, dst: gaussian(src, dst),
-        'mask': lambda src, dst: mask(src, dst),
-        'roi_objects': lambda src, dst: roi_objects(src, dst),
-        'analyze_object': lambda src, dst: analyze_object(src, dst),
-        'pseudolandmarks': lambda src, dst: pseudolandmarks(src, dst),
+        'gaussian': lambda src, dst,
+        is_file: gaussian(src, dst, is_file),
+        'mask': lambda src, dst,
+        is_file: mask(src, dst, is_file),
+        'roi_objects': lambda src, dst,
+        is_file: roi_objects(src, dst, is_file),
+        'analyze_object': lambda src, dst,
+        is_file: analyze_object(src, dst, is_file),
+        'pseudolandmarks': lambda src, dst,
+        is_file: pseudolandmarks(src, dst, is_file),
     }
     display_all = True
 
@@ -289,23 +291,9 @@ if __name__ == '__main__':
             sys.exit(1)
         else:
             image_path = os.path.abspath(args.img_path)
-            print(image_path)
-            print(os.path.dirname(os.path.abspath(__file__)))
-            gaussian(image_path,
-                     os.path.dirname(os.path.abspath(__file__)),
-                     is_file=True)
-            mask(image_path,
-                 os.path.dirname(os.path.abspath(__file__)),
-                 is_file=True)
-            roi_objects(image_path,
-                        os.path.dirname(os.path.abspath(__file__)),
-                        is_file=True)
-            analyze_object(image_path,
-                           os.path.dirname(os.path.abspath(__file__)),
-                           is_file=True)
-            pseudolandmarks(image_path,
-                            os.path.dirname(os.path.abspath(__file__)),
-                            is_file=True)
+            dst = os.path.dirname(os.path.abspath(__file__))
+            for key in transform_funcs:
+                transform_funcs[key](src=image_path, dst=dst, is_file=True)
     else:
         args_dict = vars(args)
         transformations = list(transform_funcs)
