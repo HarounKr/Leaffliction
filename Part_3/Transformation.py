@@ -4,6 +4,7 @@ import os
 import cv2
 import glob
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 def args_parser() -> argparse.Namespace:
@@ -18,6 +19,7 @@ def args_parser() -> argparse.Namespace:
     parser.add_argument("-roi_objects", action="store_true")
     parser.add_argument("-analyze_object", action="store_true")
     parser.add_argument("-pseudolandmarks", action="store_true")
+    parser.add_argument("-histogram", action="store_true")
     args = parser.parse_args()
     return args
 
@@ -266,6 +268,31 @@ def pseudolandmarks(src, dst, is_file=False):
         cv2.imwrite(output_path, out_img)
     return
 
+# done - Histogram
+def histogram(src, dst, is_file=False):
+    os.makedirs(dst, exist_ok=True)
+
+    image_files = []
+    for ext in ("*.jpg", "*.png", "*.jpeg", "*.JPG", "*.PNG", "*.JPEG"):
+        image_files.extend(glob.glob(os.path.join(src, ext)))
+    if is_file:
+        image_files = [src]
+    for img_file in image_files:
+        img = cv2.imread(img_file)
+        if img is None:
+            print(f"Erreur: impossible de lire l'image {img_file}")
+            continue
+        colors = ('b', 'g', 'r')
+        plt.figure(figsize=(10, 5))
+        for i, col in enumerate(colors):
+            hist = cv2.calcHist([img], [i], None, [256], [0, 256])
+            plt.plot(hist, color=col)
+            plt.xlim([0, 256])
+        base, ext = os.path.splitext(os.path.basename(img_file))
+        output_path = os.path.join(dst, f"{base}_histogram{ext}")
+        plt.savefig(output_path)
+    return
+
 
 if __name__ == '__main__':
     args = args_parser()
@@ -282,6 +309,8 @@ if __name__ == '__main__':
         is_file: analyze_object(src, dst, is_file),
         'pseudolandmarks': lambda src, dst,
         is_file: pseudolandmarks(src, dst, is_file),
+        'histogram': lambda src, dst,
+        is_file: histogram(src, dst, is_file)
     }
     display_all = True
 
