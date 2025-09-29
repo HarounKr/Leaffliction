@@ -58,20 +58,20 @@ def main():
         root_dir,
         valid_pct=0.2,
         seed=42,
-        bs=64,
+        bs=32,
         num_workers=2,
         persistent_workers=True,
         item_tfms=item_tfms,
         batch_tfms=batch_tfms
     )
 
-    train_batch = data.train.one_batch()
-    batch_file_path = os.path.join(result_dir_path, 'batch.png')
-
-    save_batch(batch=train_batch, data=data, path=batch_file_path)
+    train_batch = data.train
+    for i, batch in enumerate(train_batch, 1):
+        batch_file_path = os.path.join(result_dir_path, f'batch_{i}.png')
+        save_batch(batch=batch, data=data, path=batch_file_path)
 
     learn = fv.vision_learner(data, fv.resnet18, metrics=fv.accuracy)
-    learn.fine_tune(2)
+    learn.fine_tune(3)
 
     model_file_path = os.path.join(result_dir_path, 'model.pkl')
     learn.export(model_file_path)

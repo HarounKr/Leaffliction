@@ -268,6 +268,7 @@ def pseudolandmarks(src, dst, is_file=False):
         cv2.imwrite(output_path, out_img)
     return
 
+
 # done - Histogram
 def histogram(src, dst, is_file=False):
     os.makedirs(dst, exist_ok=True)

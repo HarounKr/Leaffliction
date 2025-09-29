@@ -76,7 +76,6 @@ def handle_subdirs(subdirs, root_dir, exts, charts_dir):
 
 
 def handle_files(entries, root_dir, exts, charts_dir) -> None:
-    print('entries', entries)
     files_name = []
     for f in entries:
         if os.path.isfile(os.path.join(root_dir, f)):

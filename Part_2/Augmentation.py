@@ -81,6 +81,8 @@ def skew_image(img):
 
 if __name__ == "__main__":
     type = [".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".webp", "tif"]
+    dst = os.path.join(os.getcwd(), 'augmented_directory')
+    os.makedirs(dst, exist_ok=True)
     if len(sys.argv) == 2:
         if len(sys.argv[1]) < 4:
             print("Error : Invalid file name.")
@@ -88,21 +90,21 @@ if __name__ == "__main__":
                 sys.argv[1][-5:].lower() not in type:
             print("Error : Invalid file type.")
         else:
-            file_name = os.path.splitext(sys.argv[1])[0]
-            print(file_name)
+            name, _ = os.path.splitext(sys.argv[1])
+            file_name = name.rsplit('/', 1)[-1]
             image = Image.open(sys.argv[1])
             flipped_image = flip_image(image)
-            flipped_image.save(f"{file_name}_Flip.jpg")
+            flipped_image.save(f"{dst}/{file_name}_Flip.jpg")
             rotated_image = rotate_image(image)
-            rotated_image.save(f"{file_name}_Rotate.jpg")
+            rotated_image.save(f"{dst}/{file_name}_Rotate.jpg")
             cropped_image = crop_image(image)
-            cropped_image.save(f"{file_name}_Crop.jpg")
+            cropped_image.save(f"{dst}/{file_name}_Crop.jpg")
             distorted_image = distort_image(image)
-            distorted_image.save(f"{file_name}_Distortion.jpg")
+            distorted_image.save(f"{dst}/{file_name}_Distortion.jpg")
             sheared_image = shear_image(image)
-            sheared_image.save(f"{file_name}_Shear.jpg")
+            sheared_image.save(f"{dst}/{file_name}_Shear.jpg")
             skewed_image = skew_image(image)
-            skewed_image.save(f"{file_name}_Skew.jpg")
+            skewed_image.save(f"{dst}/{file_name}_Skew.jpg")
             print("Augmented images saved successfully.")
     else:
         print("Error : Invalid number of arguments.")

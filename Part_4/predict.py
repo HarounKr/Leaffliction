@@ -13,32 +13,34 @@ def predict_image(img_file):
 
 
 if __name__ == '__main__':
-    file_path = sys.argv[1]
-
-    if not os.path.isfile(file_path):
-        print(f"Error: <{file_path}> is not a valid file")
-        sys.exit(1)
-
-    if not file_path.lower().endswith(('.png', '.jpg', '.jpeg')):
-        print("Error: Unsupported file format.")
-        sys.exit(1)
-
+    argv = sys.argv[1]
+    paths = []
     os.makedirs('predict', exist_ok=True)
-    img, pred = predict_image(file_path)
+    if os.path.isfile(argv):
+        paths.append(argv)
+    else:
+        for root, _, files in os.walk(argv, topdown=False):
+            for name in files:
+                if not name.lower().endswith(('.png', '.jpg', '.jpeg')):
+                    print("Error: Unsupported file format.")
+                    sys.exit(1)
+                paths.append(os.path.join(root, name))
+    paths.sort()
+    for i, path in enumerate(paths, 1):
+        fig, ax = plt.subplots(figsize=(5, 5))
+        img, pred = predict_image(path)
 
-    fig, ax = plt.subplots(figsize=(5, 5))
+        ax.imshow(img)
+        ax.axis('off')
 
-    ax.imshow(img)
-    ax.axis('off')
+        fig.patch.set_facecolor('black')
+        plt.subplots_adjust(bottom=0.25)
 
-    fig.patch.set_facecolor('black')
-    plt.subplots_adjust(bottom=0.25)
+        txt = f"Class predicted : {pred}"
+        ha = "center"
+        va = "center"
+        fig.text(0.5, 0.15, txt, ha=ha, va=va, fontsize=14, color="lightgreen")
 
-    txt = f"Class predicted : {pred}"
-    ha = "center"
-    va = "center"
-    fig.text(0.5, 0.15, txt, ha=ha, va=va, fontsize=14, color="lightgreen")
-
-    out_path = os.path.join('predict', f'{pred}.png')
-    plt.savefig(out_path)
-    print(f"Résultat enregistré dans : {out_path}")
+        out_path = os.path.join('predict', f'{pred}_{i}.png')
+        plt.savefig(out_path)
+        print(f"Résultat enregistré dans : {out_path}")
